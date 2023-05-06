@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Flat = require('../models/flat');
+const { body, validationResult } = require('express-validator');
 
 //authentication for private API requests
 function requireApiKey(req, res, next) {
@@ -27,14 +28,27 @@ router.get('/:id', getFlat, (req, res) => {
 });
 
 // Create a new flat
-router.post('/', async (req, res) => {
-  const flat = new Flat({
-    location: req.body.location,
-    rent: req.body.rent,
-    bedrooms: req.body.bedrooms,
-    description: req.body.description,
-    createdBy: req.body.createdBy
-  });
+router.post('/createFlat', 
+[
+    body('latitude').notEmpty().withMessage('Latitude is required'),
+    body('longitude').notEmpty().withMessage('Longitude is required'),
+    body('rent').isNumeric().withMessage('Rent must be a number'),
+    body('bedrooms').isNumeric().withMessage('Bedrooms must be a number'),
+    body('description').isLength({ min: 10, max: 500 }).withMessage('Description must be between 10 and 500 characters')
+],
+async (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors.array()[0].msg });
+    }  
+    const flat = new Flat({
+        location: req.body.location,
+        rent: req.body.rent,
+        bedrooms: req.body.bedrooms,
+        description: req.body.description,
+        createdBy: req.body.createdBy
+    });
 
   try {
     const newFlat = await flat.save();

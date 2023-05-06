@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
+const {body, validationResult} = require('express-validator')
 require('dotenv').config()
 
 //Authentication for private API request
@@ -28,7 +29,21 @@ router.get('/:id', getUser, (req, res) => {
 });
 
 // Create a new user
-router.post('/createUser', async (req, res) => {
+router.post('/createUser',
+[
+  body('name').notEmpty().withMessage('Name is required'),
+  body('email').isEmail().withMessage('Invalid email format'),
+  body('password').isLength({ min: 8, max: 30 }).withMessage('Password must be between 8 and 30 characters'),
+  body('latitude').notEmpty().withMessage('Latitude is required'),
+  body('longitude').notEmpty().withMessage('Longitude is required')
+],
+async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ message: errors.array()[0].msg });
+  }
+
   const user = new User({
     name: req.body.name,
     email: req.body.email,
