@@ -2,8 +2,15 @@ const mongoose = require('mongoose');
 
 const flatSchema = new mongoose.Schema({
   location: {
-    type: String,
-    required: true
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   },
   rent: {
     type: Number,
@@ -24,4 +31,5 @@ const flatSchema = new mongoose.Schema({
   }
 });
 
+flatSchema.index({ location: '2dsphere' });
 module.exports = mongoose.model('Flat', flatSchema);

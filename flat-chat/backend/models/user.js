@@ -15,8 +15,15 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   location: {
-    type: String,
-    required: true
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   },
   searchLocation: {
     type: String,
@@ -43,5 +50,7 @@ const userSchema = new mongoose.Schema({
     required: true
   }
 });
+
+flatSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('User', userSchema);

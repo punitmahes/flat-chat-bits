@@ -93,4 +93,24 @@ async function getFlat(req, res, next) {
   next();
 }
 
+// Route to get flats within a certain radius of a point
+router.get('/flats/nearby', (req, res) => {
+    const { latitude, longitude, radius } = req.query;
+  
+    Flat.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [longitude, latitude]
+          },
+          $maxDistance: radius
+        }
+      }
+    })
+      .populate('createdBy', 'name email') // Populate createdBy field with user data
+      .then(flats => res.json(flats))
+      .catch(err => res.status(400).json({ message: err.message }));
+  });
+
 module.exports = router;

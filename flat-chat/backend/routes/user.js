@@ -112,9 +112,36 @@ async function getUser(req, res, next) {
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
-
   res.user = user;
   next();
 }
+
+// Route to get users searching for flats in the same region and have not listed any flats
+router.get('/users/nearby', (req, res) => {
+  const { latitude, longitude, radius } = req.query;
+
+  Flat.find({
+    location: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [longitude, latitude]
+        },
+        $maxDistance: radius
+      }
+    }
+  })
+    .distinct('createdBy') // Get unique createdBy values
+    .then(userIds => {
+      User.find({
+        _id: { $in: userIds },
+        _id: { $nin: Flat.distinct('createdBy') } // Exclude users who have listed flats
+      })
+        .then(users => res.json(users))
+        .catch(err => res.status(400).json({ message: err.message }));
+    })
+    .catch(err => res.status(400).json({ message: err.message }));
+});
+
 
 module.exports = router;
