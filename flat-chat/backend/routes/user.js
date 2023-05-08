@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const {body, validationResult} = require('express-validator')
+const passport = require('passport');
 require('dotenv').config()
 
 //Authentication for private API request
@@ -12,6 +13,7 @@ function requireApiKey(req, res, next) {
   }
   next();
 }
+
 
 // Get all users
 router.get('/', requireApiKey, async (req, res) => {
@@ -25,81 +27,66 @@ router.get('/', requireApiKey, async (req, res) => {
 
 // Get a single user
 router.get('/:id', getUser, (req, res) => {
-  res.json(res.user);
+  console.log(req.params.id);
+  User.findById(req.params.id).then(user=>{
+    res.json(user);
+  }).catch(err=>{res.send("Failed")});
+});
+
+router.get('/user',(req, res)=>{
+  res.send(req.user);
 });
 
 // Create a new user
-router.post('/createUser',
-[
-  body('name').notEmpty().withMessage('Name is required'),
-  body('email').isEmail().withMessage('Invalid email format'),
-  body('password').isLength({ min: 8, max: 30 }).withMessage('Password must be between 8 and 30 characters'),
-  body('latitude').notEmpty().withMessage('Latitude is required'),
-  body('longitude').notEmpty().withMessage('Longitude is required')
-],
+router.post('/createUser', 
 async (req, res) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ message: errors.array()[0].msg });
+  console.log(req.body);
+  if(!req.body.user){
+    res.redirect('/auth/google')
   }
-
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    location: req.body.location,
-    searchLocation: req.body.searchLocation,
-    searchRadius: req.body.searchRadius,
-    profilePicture: req.body.profilePicture,
-    description: req.body.description,
-    latitude: req.body.latitude,
-    longitude: req.body.longitude
+  User.findById(req.body.user._id).then(user =>
+    {
+      user.companyName = compnayName;
+      user.location = {type : "Point", coordinates : [latitude,longitude]};
+      user.description = description;
+      user.save();
+      console.log(user);
+      res.status(200).json(user);
+    }).catch(err=>res.status(201).send("Cannout Update profile :" + err));
   });
 
-  try {
-    const newUser = await user.save();
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// Route to handle Google authentication callback
+router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+  // Redirect to the page where the user can fill in their details
+  res.redirect('/users/create');
 });
+
 
 // Update a user
 router.patch('/:id', getUser, async (req, res) => {
+  console.log(req.body)
   if (req.body.name != null) {
     res.user.name = req.body.name;
   }
   if (req.body.email != null) {
     res.user.email = req.body.email;
   }
-  if (req.body.password != null) {
-    res.user.password = req.body.password;
-  }
-  if (req.body.location != null) {
-    res.user.location = req.body.location;
-  }
-  if (req.body.searchLocation != null) {
-    res.user.searchLocation = req.body.searchLocation;
-  }
-  if (req.body.searchRadius != null) {
-    res.user.searchRadius = req.body.searchRadius;
-  }
-  if (req.body.profilePicture != null) {
-    res.user.profilePicture = req.body.profilePicture;
+  if(req.body.companyName != null){
+    res.user.companyName = req.body.companyName;
   }
   if (req.body.description != null) {
     res.user.description = req.body.description;
   }
-  if (req.body.latitude != null) {
-    res.user.latitude = req.body.latitude;
-  }
-  if (req.body.longitude != null) {
-    res.user.longitude = req.body.longitude;
-  }
+  if (req.body.latitude != null && req.body.longitude != null) {
+    res.user.location = {type:"Point", coordinates:[req.body.latitude,req.body.longitude]}
+  };
 
   try {
     const updatedUser = await res.user.save();
+    console.log(updatedUser);
     res.json(updatedUser);
   } catch (err) {
     res.status(400).json({ message: err.message });

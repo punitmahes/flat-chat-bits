@@ -1,8 +1,11 @@
 import './App.css';
+import GoogleAuthenticate from './components/googleAuthenticate';
 
 function App() {
   return (
-    <div>Inital commit</div>
+    <>
+     <GoogleAuthenticate/>
+    </>
   );
 }
 

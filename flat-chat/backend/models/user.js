@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+  Userid: mongoose.Schema.Types.ObjectId, 
   name: {
     type: String,
     required: true
@@ -10,47 +11,39 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  password: {
-    type: String,
-    required: true
-  },
   location: {
     type: {
       type: String,
       enum: ['Point'],
-      required: true
+      required: false
     },
     coordinates: {
       type: [Number],
-      required: true
+      required: false
     }
-  },
-  searchLocation: {
-    type: String,
-    required: true
   },
   searchRadius: {
     type: Number,
-    required: true
+    required: false
   },
   profilePicture: {
     type: String,
     required: false
   },
-  description: {
+  companyName: {
     type: String,
     required: false
   },
-  latitude: {
-    type: Number,
-    required: true
+  description: {
+    type: String,
+    require: false
   },
-  longitude: {
-    type: Number,
-    required: true
+  googleId: {
+    type: String,
+    unique: true
   }
 });
 
-flatSchema.index({ location: '2dsphere' });
+userSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('User', userSchema);
