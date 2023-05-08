@@ -6,7 +6,7 @@ const { body, validationResult } = require('express-validator');
 //authentication for private API requests
 function requireApiKey(req, res, next) {
     const apiKey = req.headers['x-api-key'];
-    if (!apiKey || apiKey !== process.env.API_KEY) {
+    if (!apiKey || apiKey !== "1234") {
       return res.status(401).json({ message: 'Unauthorized' });
     }
     next();
