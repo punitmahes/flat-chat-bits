@@ -1,14 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import GoogleAuthenticate from "./components/googleAuthenticate";
 
 const icon = L.icon({
   iconUrl: "./placeholder.png",
   iconSize: [38, 38],
 });
 
-const position = [13.02459661074545, 80.21557509899141];
 
 function ResetCenterView(props) {
   const { selectPosition } = props;
@@ -29,10 +30,27 @@ function ResetCenterView(props) {
   return null;
 }
 
+
 export default function Maps(props) {
   const { selectPosition } = props;
   const locationSelection = [selectPosition?.lat, selectPosition?.lon];
-
+  // const [user, setUser] = useState(null);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   const id = params.get('ID');
+  //   console.log(id)
+  //   if(id){
+  //     var url = 'http://localhost:3001/api/user/'+id.toString()
+  //     axios.get(url).then(response => {
+  //       setUser(response.data);
+  //       console.log(user);
+  //     })
+  //     .catch(error => {
+  //       console.error(error);
+  //     });
+  //   }
+  // }, []);
+const position = [13.02459661074545, 80.21557509899141];
   return (
     <MapContainer
       center={position}

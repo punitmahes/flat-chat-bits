@@ -97,7 +97,7 @@ function GoogleAuthenticate() {
     return (
       <div>
         <h1>Welcome to my app, {user.companyName}!</h1>
-        <p>Your location is {user.location}.</p>
+        <p>Your location is {user.location.coordinates}.</p>
       </div>
     );
   }
