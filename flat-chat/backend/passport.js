@@ -8,7 +8,7 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.CLIENT_SECRET,
   callbackURL: '/auth/google/callback'
 }, (accessToken, refreshToken, profile, done) => {
-  User.findOne({ name: profile.displayName })
+  User.findOne({ email: profile.emails[0].value })
     .then(user => {
       if (user) {
         done(null,user);
