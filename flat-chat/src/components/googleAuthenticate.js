@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../index.css';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import logo from './media/PS-findit.png';
+import LocationInput from './LoactionInput';
+import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+
 
 function GoogleAuthenticate() {
   const [user, setUser] = useState(null);
@@ -7,6 +15,7 @@ function GoogleAuthenticate() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [description, setDescription] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -16,12 +25,14 @@ function GoogleAuthenticate() {
       var url = 'http://localhost:3001/api/user/'+id.toString()
       axios.get(url).then(response => {
         setUser(response.data);
+        if(response.data.companyName){
+          navigate('/home');
+        }
       })
       .catch(error => {
         console.error(error);
       });
     }
-   
     
   }, []);
   
@@ -50,54 +61,61 @@ function GoogleAuthenticate() {
     axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description }).then((res) => {
       setUser(res.data);
       console.log(user);
+      navigate('/home');
     }).catch((err) => {
       console.error('Error creating user', err);
     });
   };
 
+  function handleUpdateLocation(lat, lon) {
+    console.log(`Updating location to lat: ${lat}, lon: ${lon}`);
+    // Your code to handle the updated location goes here
+    setLatitude(lat);
+    setLongitude(lon);
+  };
+
   if (!user) {
     // Render Google sign-in button if user is not authenticated
     return (
-      <div>
-        <h1>Welcome to my app</h1>
-        <p>Please sign in with Google:</p>
-        <a href='http://localhost:3001/auth/google'>Sign in</a>
+      <div className='flex items-center justify-center h-screen w-screen'>
+        <div className='lg:w-2/5 md:w-3/4'>
+          <div className='flex-auto w-full text-center'>
+           <div className='w-full flex justify-center'><img src={logo} alt='logo' className='lg:w-3/4 md:w-1/2 sm:w-1/2'></img></div>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/706px-Google_%22G%22_Logo.svg.png" alt="Google logo" className="w-4 h-4 mr-2" />}
+              className="px-4 py-2 text-sm font-medium text-black bg-white !important hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+              <a href='http://localhost:3001/auth/google'>Sign In</a>
+    </Button>
+          </div>
+        </div>
       </div>
     );
   } else if (!user.companyName || !user.location) {
     // Render sign-up form if user is authenticated but has not filled in company name and location
     return (
-      <div>
-        <h1>Welcome to my app</h1>
-        <form onSubmit={handleCreateUser}>
-          <label>
-            Company name:
-            <input type="text" value={companyName} onChange={handleCompanyNameChange} />
-          </label>
-          <br />
-          <label>
-            Latitude:
-            <input type="text" value={latitude} onChange={handleLatitudeChange} />
-          </label>
-          <label>
-            Longitude:
-            <input type="text" value={longitude} onChange={handleLongitudeChange} />
-          </label>
-          <label>
-            description:
-            <input type="text" value={description} onChange={handleDescriptionChange} />
-          </label>
-          <br />
-          <button type="submit">Save</button>
-        </form>
+      <div className='flex items-center justify-center h-screen w-screen'>
+        <div className='bg-zinc-50 p-3 rounded-lg border border-orange-400 border-2 lg:w-2/5 md:w-3/4 shadow-[0px_0px_50px_20px_rgb(255,225,255,0.5)]'>
+          <h1 className='flex-auto font-bold text-center w-full text-orange-400 font-serif text-2xl p-3'>Additional Details</h1>
+          <div className=''>
+          <form onSubmit={handleCreateUser} className='flex-auto m-1'>
+          <div className='m-3'><TextField  id="outlined" label="PS Station" onChange={handleCompanyNameChange} value={companyName} className='w-full border-white'/></div>
+          <div className ='m-3'><LocationInput className='w-full' onUpdateLocation={handleUpdateLocation} /></div>
+          <div className='m-3'><TextField id="outlined-password-input" label="About You" onChange={handleDescriptionChange} value={description} className='w-full'/></div>
+          <div className='flex w-full justify-center'><button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg">Submit</button></div>
+          </form>
+          </div>
+          </div>
       </div>
     );
   } else {
     // Render main page if user is authenticated and has filled in company name and location
     return (
-      <div>
+      <div className='h-screen w-screen text-white'>
         <h1>Welcome to my app, {user.companyName}!</h1>
-        <p>Your location is {user.location}.</p>
+        <p>About you - {user.description}.</p>
       </div>
     );
   }
