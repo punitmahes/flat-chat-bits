@@ -61,7 +61,7 @@ function GoogleAuthenticate() {
     axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description }).then((res) => {
       setUser(res.data);
       console.log(user);
-      navigate('/home');
+      navigate('/home', {users: user});
     }).catch((err) => {
       console.error('Error creating user', err);
     });
