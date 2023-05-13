@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 function GoogleAuthenticate() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState([]);
   const [companyName, setCompanyName] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
@@ -20,21 +20,25 @@ function GoogleAuthenticate() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('ID');
-    console.log(id)
     if(id){
-      var url = 'http://localhost:3001/api/user/'+id.toString()
-      axios.get(url).then(response => {
-        setUser(response.data);
-        if(response.data.companyName){
-          navigate('/home');
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      });
+      getData(id);
+      
+    }
+
+    async function getData(id){
+      var url = 'http://localhost:3001/api/user/'+id.toString();
+      const response = await axios.get(url);
+      const data = await response.data;
+      await setUser(data);
     }
     
   }, []);
+
+  useEffect(()=> {
+    if(user?.companyName){
+      navigate('/home', {state: {user}});
+    }
+  },[user])
   
 
   const handleCompanyNameChange = (e) => {
@@ -60,7 +64,6 @@ function GoogleAuthenticate() {
     // Call server-side create user endpoint to update user's company name and location
     axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description }).then((res) => {
       setUser(res.data);
-      console.log(user);
       navigate('/home', {users: user});
     }).catch((err) => {
       console.error('Error creating user', err);
@@ -74,7 +77,7 @@ function GoogleAuthenticate() {
     setLongitude(lon);
   };
 
-  if (!user) {
+  if (!user || Object.keys(user).length == 0) {
     // Render Google sign-in button if user is not authenticated
     return (
       <div className='flex items-center justify-center h-screen w-screen'>
