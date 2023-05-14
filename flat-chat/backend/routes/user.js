@@ -25,6 +25,26 @@ router.get('/', requireApiKey, async (req, res) => {
   }
 });
 
+router.get('/users', requireApiKey, async (req, res) => {
+  const latitude = parseFloat(req.query.latitude);
+  const longitude = parseFloat(req.query.longitude);
+  try {
+    User.find({
+      'location.coordinates': {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [latitude, longitude]
+          }
+        }
+      }
+    }).then(users=>res.json(users));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get a single user
 router.get('/:id', getUser, (req, res) => {
   console.log(req.params.id);
@@ -170,28 +190,5 @@ router.get('/unique/coordinates', requireApiKey, async (req, res) => {
   }
 });
 
-router.get('/users', requireApiKey, async (req, res) => {
-  const latitude = parseFloat(req.searchParam.get('latitude'));
-  const longitude = parseFloat(req.searchParam.get('longitude'));
-  console.log(latitude);
-  // if(!latitude||longitude==null){
-    res.json(latitude);
-  // }
-  try {
-    User.find({
-      'location.coordinates': {
-        $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [latitude, longitude]
-          }
-        }
-      }
-    }).then(users=>res.json(users));
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
-  }
-});
 
 module.exports = router;
