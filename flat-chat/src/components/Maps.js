@@ -28,24 +28,26 @@ const Maps = (props) => {
   useEffect(() => {
     if(user){
       loaded = true;
+      if(Object.keys(user).length > 0){
+        const config = {
+          headers:{
+            "x-api-key": "1234"
+          }
+        }
+          var url = 'http://localhost:3001/api/user/unique/coordinates/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=5000';
+          console.log(url);
+          axios.get(url,config).then(response => {
+            setAllCoordinates(response.data);
+            console.log(allCoordinates);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+        }
     }
   },[user]);
 
-  useEffect(() => {
-    const config = {
-      headers:{
-        "x-api-key":"1234"
-      }
-    }
-    var url = 'http://localhost:3001/api/user/unique/coordinates'
-    axios.get(url,config).then(response => {
-      setAllCoordinates(response.data);
-      console.log(allCoordinates);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-  }, []);
+  
 
   if(Object.keys(user).length > 0){
     return  <div className="w-full h-full">

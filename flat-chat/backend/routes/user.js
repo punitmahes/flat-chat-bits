@@ -25,6 +25,45 @@ router.get('/', requireApiKey, async (req, res) => {
   }
 });
 
+router.get('/unique/coordinates', requireApiKey, async (req, res) => {
+  const latitude = parseFloat(req.query.latitude);
+  const longitude = parseFloat(req.query.longitude);
+  const radius = parseFloat(req.query.radius);
+  console.log(latitude);
+  // const latitude = 12.99763045861531;
+  // const longitude = 77.68749006403777;
+  try {
+    const coordinatesWithCompanyNames = await User.aggregate([
+      {
+        $geoNear: {
+          near: { type: "Point", coordinates: [ latitude , longitude ] },
+          distanceField: "dist.calculated",
+          maxDistance: radius,
+          includeLocs: "dist.location",
+          spherical: true
+       }
+      },
+      {
+        $group: {
+          _id: '$location.coordinates',
+          companyName: { $first: '$companyName' }
+        }
+      },
+      {
+        $project: {
+          coordinates: '$_id',
+          companyName: 1,
+          _id: 0
+        }
+      }
+    ]).exec();
+    res.json(coordinatesWithCompanyNames);
+  }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.get('/users', requireApiKey, async (req, res) => {
   const latitude = parseFloat(req.query.latitude);
   const longitude = parseFloat(req.query.longitude);
@@ -45,6 +84,7 @@ router.get('/users', requireApiKey, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Get a single user
 router.get('/:id', getUser, (req, res) => {
@@ -166,30 +206,6 @@ router.get('/users/nearby', (req, res) => {
     .catch(err => res.status(400).json({ message: err.message }));
 });
 
-
-router.get('/unique/coordinates', requireApiKey, async (req, res) => {
-  try {
-    const coordinatesWithCompanyNames = await User.aggregate([
-      {
-        $group: {
-          _id: '$location.coordinates',
-          companyName: { $first: '$companyName' }
-        }
-      },
-      {
-        $project: {
-          coordinates: '$_id',
-          companyName: 1,
-          _id: 0
-        }
-      }
-    ]).exec();
-    res.json(coordinatesWithCompanyNames);
-  }
-    catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
 
 
 module.exports = router;
