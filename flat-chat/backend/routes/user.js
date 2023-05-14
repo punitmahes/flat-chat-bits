@@ -30,12 +30,13 @@ router.get('/users', requireApiKey, async (req, res) => {
   const longitude = parseFloat(req.query.longitude);
   try {
     User.find({
-      'location.coordinates': {
+      location: {
         $near: {
           $geometry: {
             type: 'Point',
             coordinates: [latitude, longitude]
-          }
+          },
+          $maxDistance: 0.5
         }
       }
     }).then(users=>res.json(users));
