@@ -146,4 +146,52 @@ router.get('/users/nearby', (req, res) => {
 });
 
 
+router.get('/unique/coordinates', requireApiKey, async (req, res) => {
+  try {
+    const coordinatesWithCompanyNames = await User.aggregate([
+      {
+        $group: {
+          _id: '$location.coordinates',
+          companyName: { $first: '$companyName' }
+        }
+      },
+      {
+        $project: {
+          coordinates: '$_id',
+          companyName: 1,
+          _id: 0
+        }
+      }
+    ]).exec();
+    res.json(coordinatesWithCompanyNames);
+  }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.get('/users', requireApiKey, async (req, res) => {
+  const latitude = parseFloat(req.searchParam.get('latitude'));
+  const longitude = parseFloat(req.searchParam.get('longitude'));
+  console.log(latitude);
+  // if(!latitude||longitude==null){
+    res.json(latitude);
+  // }
+  try {
+    User.find({
+      'location.coordinates': {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [latitude, longitude]
+          }
+        }
+      }
+    }).then(users=>res.json(users));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

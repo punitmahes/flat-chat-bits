@@ -8,7 +8,7 @@ import markerUser from './media/location.png'
 
 const Maps = (props) => {
   const [user, setUser] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [allCoordinates, setAllCoordinates] = useState([]);
   var loaded = false;
   const passedUser = props.user;
 
@@ -37,10 +37,10 @@ const Maps = (props) => {
         "x-api-key":"1234"
       }
     }
-    var url = 'http://localhost:3001/api/user/'
+    var url = 'http://localhost:3001/api/user/unique/coordinates'
     axios.get(url,config).then(response => {
-      setUsers(response.data);
-      console.log(users);
+      setAllCoordinates(response.data);
+      console.log(allCoordinates);
     })
     .catch(error => {
       console.error(error);
@@ -55,11 +55,11 @@ const Maps = (props) => {
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ul>
-        {users.map(customUser => (
-          <Marker key={customUser.googleId} position={[customUser.location.coordinates[0], customUser.location.coordinates[1]]} icon={customUser.googleId == user.googleId ? userIcon : icon}>
+        {allCoordinates.map(coordinatesWithCompanyName => (
+          <Marker key={coordinatesWithCompanyName.coordinates} position={[coordinatesWithCompanyName.coordinates[0], coordinatesWithCompanyName.coordinates[1]]} icon={coordinatesWithCompanyName.companyName == user.companyName ? userIcon : icon}>
             <Popup>
               <div>
-                <p>Company Name: {customUser.companyName}</p>
+                <p>Company Name: {coordinatesWithCompanyName.companyName}</p>
               </div>
             </Popup>
           </Marker>
