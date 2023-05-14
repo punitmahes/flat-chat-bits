@@ -4,6 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import marker from './media/marker.png'
+import markerUser from './media/location.png'
 
 const Maps = (props) => {
   const [user, setUser] = useState([]);
@@ -14,6 +15,10 @@ const Maps = (props) => {
   const icon = L.icon({
     iconUrl: marker,
     iconSize: [30, 40],
+  });
+  const userIcon = L.icon({
+    iconUrl: markerUser,
+    iconSize: [50, 50],
   });
   
   useEffect(() => {
@@ -51,7 +56,7 @@ const Maps = (props) => {
       />
       <ul>
         {users.map(customUser => (
-          <Marker key={customUser.googleId} position={[customUser.location.coordinates[0], customUser.location.coordinates[1]]} icon={icon}>
+          <Marker key={customUser.googleId} position={[customUser.location.coordinates[0], customUser.location.coordinates[1]]} icon={customUser.googleId == user.googleId ? userIcon : icon}>
             <Popup>
               <div>
                 <p>Company Name: {customUser.companyName}</p>

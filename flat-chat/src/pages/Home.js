@@ -9,10 +9,14 @@ import Navbar from '../components/Navbar';
 const Home = () => {
   const location = useLocation();
   const [user, setUser] = useState([]);
-
+  const navigate = useNavigate();
+  if(!location.state){
+    navigate('/');
+  }
   useEffect(()=> {
-    setUser(location.state.user);
-  },[]);
+    console.log(location);
+    setUser(location?.state.user);
+  },[location]);
 
   if(Object.keys(user).length == 0){
     return <div>Loading</div>

@@ -64,7 +64,7 @@ function GoogleAuthenticate() {
     // Call server-side create user endpoint to update user's company name and location
     axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description }).then((res) => {
       setUser(res.data);
-      navigate('/home', {users: user});
+      navigate('/home', {state: {user}});
     }).catch((err) => {
       console.error('Error creating user', err);
     });
