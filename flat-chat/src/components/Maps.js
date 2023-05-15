@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import marker from './media/marker.png'
 import markerUser from './media/location.png'
-import markerFlat from './media/lat-pin.png'
+import markerFlat from './media/flat-pin.png'
 
 const Maps = (props) => {
   const [user, setUser] = useState([]);
@@ -19,12 +19,12 @@ const Maps = (props) => {
     iconSize: [30, 40],
   });
   const userIcon = L.icon({
-    iconUrl: markerFlat,
+    iconUrl: markerUser,
     iconSize: [50, 50],
   });
   const flatIcon = L.icon({
-    iconUrl: marker,
-    iconSize: [30, 40],
+    iconUrl: markerFlat,
+    iconSize: [30, 30],
   });
   useEffect(() => {
     setUser(passedUser);
@@ -39,35 +39,27 @@ const Maps = (props) => {
             "x-api-key": "1234"
           }
         }
-          var url = 'http://localhost:3001/api/user/unique/coordinates/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=5000';
-          console.log(url);
-          axios.get(url,config).then(response => {
-            setAllCoordinates(response.data);
-            console.log(allCoordinates);
-          })
-          .catch(error => {
-            console.error(error);
-          });
-        }
-    }
-  },[user]);
-
-  useEffect(()=>{
-    const config = {
-      headers:{
-        "x-api-key": "1234"
+        var url = 'http://localhost:3001/api/user/unique/coordinates/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=1000000000';
+        console.log(url);
+        axios.get(url,config).then(response => {
+          setAllCoordinates(response.data);
+          console.log(allCoordinates);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+        var url = 'http://localhost:3001/api/flat/unique/flats/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=1000000000';
+        console.log(url);
+        axios.get(url,config).then(response => {
+          setFlats(response.data);
+          console.log(flats);
+        })
+        .catch(error => {
+          console.error(error);
+        });
       }
     }
-      var url = 'http://localhost:3001/api/flat/';
-      console.log(url);
-      axios.get(url,config).then(response => {
-        setFlats(response.data);
-        console.log(flats);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  },[])
+  },[user]);
 
   
 
@@ -91,7 +83,7 @@ const Maps = (props) => {
       </ul>
       <ul>
         {flats.map(flat => (
-          <Marker key={flat.location.coordinates} position={[flat.location.coordinates[0], flat.location.coordinates[1]]} icon={flat.createBy == user.id ? flatIcon : icon}>
+          <Marker key={flat.coordinates} position={[flat.coordinates[0], flat.coordinates[1]]} icon={flatIcon}>
             <Popup>
               <div>
                 <p>Flat Info: {flat.description}</p>

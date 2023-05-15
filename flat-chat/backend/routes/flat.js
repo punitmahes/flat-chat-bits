@@ -22,6 +22,43 @@ router.get('/', requireApiKey, async (req, res) => {
   }
 });
 
+router.get('/unique/flats', requireApiKey, async (req, res) => {
+  const latitude = parseFloat(req.query.latitude);
+  const longitude = parseFloat(req.query.longitude);
+  const radius = parseFloat(req.query.radius);
+  console.log(latitude);
+  try {
+    const flatsWithDescription = await Flat.aggregate([
+      {
+        $geoNear: {
+          near: { type: "Point", coordinates: [ latitude , longitude ] },
+          distanceField: "dist.calculated",
+          maxDistance: radius,
+          includeLocs: "dist.location",
+          spherical: true
+       }
+      },
+      {
+        $group: {
+          _id: '$location.coordinates',
+          description: { $first: '$description' }
+        }
+      },
+      {
+        $project: {
+          coordinates: '$_id',
+          description: 1,
+          _id: 0
+        }
+      }
+    ]).exec();
+    res.json(flatsWithDescription);
+  }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get a single flat
 router.get('/:id', getFlat, (req, res) => {
   res.json(res.flat);

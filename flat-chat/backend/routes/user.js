@@ -30,8 +30,6 @@ router.get('/unique/coordinates', requireApiKey, async (req, res) => {
   const longitude = parseFloat(req.query.longitude);
   const radius = parseFloat(req.query.radius);
   console.log(latitude);
-  // const latitude = 12.99763045861531;
-  // const longitude = 77.68749006403777;
   try {
     const coordinatesWithCompanyNames = await User.aggregate([
       {
