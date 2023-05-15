@@ -5,10 +5,12 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import marker from './media/marker.png'
 import markerUser from './media/location.png'
+import markerFlat from './media/lat-pin.png'
 
 const Maps = (props) => {
   const [user, setUser] = useState([]);
   const [allCoordinates, setAllCoordinates] = useState([]);
+  const [flats,setFlats] = useState([]);
   var loaded = false;
   const passedUser = props.user;
 
@@ -17,10 +19,13 @@ const Maps = (props) => {
     iconSize: [30, 40],
   });
   const userIcon = L.icon({
-    iconUrl: markerUser,
+    iconUrl: markerFlat,
     iconSize: [50, 50],
   });
-  
+  const flatIcon = L.icon({
+    iconUrl: marker,
+    iconSize: [30, 40],
+  });
   useEffect(() => {
     setUser(passedUser);
   },[passedUser]);
@@ -47,6 +52,23 @@ const Maps = (props) => {
     }
   },[user]);
 
+  useEffect(()=>{
+    const config = {
+      headers:{
+        "x-api-key": "1234"
+      }
+    }
+      var url = 'http://localhost:3001/api/flat/';
+      console.log(url);
+      axios.get(url,config).then(response => {
+        setFlats(response.data);
+        console.log(flats);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },[])
+
   
 
   if(Object.keys(user).length > 0){
@@ -62,6 +84,17 @@ const Maps = (props) => {
             <Popup>
               <div>
                 <p>Company Name: {coordinatesWithCompanyName.companyName}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </ul>
+      <ul>
+        {flats.map(flat => (
+          <Marker key={flat.location.coordinates} position={[flat.location.coordinates[0], flat.location.coordinates[1]]} icon={flat.createBy == user.id ? flatIcon : icon}>
+            <Popup>
+              <div>
+                <p>Flat Info: {flat.description}</p>
               </div>
             </Popup>
           </Marker>
