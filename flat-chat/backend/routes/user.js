@@ -108,6 +108,7 @@ async (req, res) => {
       user.companyName = compnayName;
       user.location = {type : "Point", coordinates : [latitude,longitude]};
       user.description = description;
+      user.reason = reason;
       user.save();
       console.log(user);
       res.status(200).json(user);
@@ -141,6 +142,9 @@ router.patch('/:id', getUser, async (req, res) => {
   }
   if (req.body.latitude != null && req.body.longitude != null) {
     res.user.location = {type:"Point", coordinates:[req.body.latitude,req.body.longitude]}
+  }
+  if (req.body.reason != null) {
+    req.user.reason = req.body.reason;
   };
 
   try {

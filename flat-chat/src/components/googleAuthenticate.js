@@ -15,6 +15,8 @@ function GoogleAuthenticate() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [description, setDescription] = useState('');
+  const [reason, setReason] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,13 +58,16 @@ function GoogleAuthenticate() {
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
+  const handleReasonChange = (e) => {
+    setReason(e.target.value);
+  };
 
 
   const handleCreateUser = (e) => {
     e.preventDefault();
 
     // Call server-side create user endpoint to update user's company name and location
-    axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description }).then((res) => {
+    axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description, reason }).then((res) => {
       setUser(res.data);
       navigate('/home', {state: {user}});
     }).catch((err) => {
@@ -107,6 +112,19 @@ function GoogleAuthenticate() {
           <div className='m-3'><TextField  id="outlined" label="PS Station" onChange={handleCompanyNameChange} value={companyName} className='w-full border-white'/></div>
           <div className ='m-3'><LocationInput className='w-full' onUpdateLocation={handleUpdateLocation} /></div>
           <div className='m-3'><TextField id="outlined-password-input" label="About You" onChange={handleDescriptionChange} value={description} className='w-full'/></div>
+          <div className='m-3'>
+          <div>
+            <label htmlFor="reason">Reason:</label>
+          </div>
+          <div>
+            <select id="reason" onChange={handleReasonChange} value={reason} className='w-full border-white'>
+              <option value="PS1">PS 1</option>
+              <option value="PS2">PS 2</option>
+              <option value="SI">Summer Intern</option>
+              <option value="Job">Job</option>
+            </select>
+          </div>
+        </div>
           <div className='flex w-full justify-center'><button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg">Submit</button></div>
           </form>
           </div>

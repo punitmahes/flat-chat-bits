@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema({
   googleId: {
     type: String,
     unique: true
+  },
+  reason: {
+    type: String,
+    enum: ['PS1', 'PS2', 'SI', 'Job'],
+    required: false
   }
 });
 
