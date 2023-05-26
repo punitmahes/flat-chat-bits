@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+  filter: invert(89%) hue-rotate(0deg) brightness(90%) contrast(80%);
+}

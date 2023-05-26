@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -6,13 +6,17 @@ import L from "leaflet";
 import marker from './media/marker.png'
 import markerUser from './media/location.png'
 import markerFlat from './media/flat-pin.png'
+import PopupWindow from "./PopupWindow";
 
 const Maps = (props) => {
   const [user, setUser] = useState([]);
   const [allCoordinates, setAllCoordinates] = useState([]);
   const [flats,setFlats] = useState([]);
+  const [selectedPin, setSelectedPin] = useState(null);
+  const [currentCompany, setCurrentCompany] = useState(null);
   var loaded = false;
   const passedUser = props.user;
+  
 
   const icon = L.icon({
     iconUrl: marker,
@@ -61,38 +65,45 @@ const Maps = (props) => {
     }
   },[user]);
 
-  
+  const mapRef = useRef(null); 
+  function HandleMarkerClick(data){
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.flyTo(data.coordinates, 18); // Adjust the zoom level as needed
+    }
+    setCurrentCompany(data.companyName);
+    setSelectedPin(data.coordinates);
+  }
+
+  function handleMarkerClose(){
+    setSelectedPin(null);
+  }
 
   if(Object.keys(user).length > 0){
-    return  <div className="w-full h-full">
-    <MapContainer center={user.location.coordinates} zoom={13} className="w-full h-full">
+    return  <div className="w-full h-full absolute top-0">
+    <MapContainer ref = {mapRef} center={user.location.coordinates} zoom={13} className="w-full h-full" >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <ul>
         {allCoordinates.map(coordinatesWithCompanyName => (
-          <Marker key={coordinatesWithCompanyName.coordinates} position={[coordinatesWithCompanyName.coordinates[0], coordinatesWithCompanyName.coordinates[1]]} icon={coordinatesWithCompanyName.companyName == user.companyName ? userIcon : icon}>
-            <Popup>
-              <div>
-                <p>Company Name: {coordinatesWithCompanyName.companyName}</p>
-              </div>
-            </Popup>
+          <Marker key={coordinatesWithCompanyName.coordinates} position={[coordinatesWithCompanyName.coordinates[0], coordinatesWithCompanyName.coordinates[1]]} icon={coordinatesWithCompanyName.companyName == user.companyName ? userIcon : icon} eventHandlers={{
+            click: () => HandleMarkerClick(coordinatesWithCompanyName),
+          }}>
           </Marker>
         ))}
       </ul>
       <ul>
         {flats.map(flat => (
-          <Marker key={flat.coordinates} position={[flat.coordinates[0], flat.coordinates[1]]} icon={flatIcon}>
-            <Popup>
-              <div>
-                <p>Flat Info: {flat.description}</p>
-              </div>
-            </Popup>
+          <Marker key={flat.coordinates} position={[flat.coordinates[0], flat.coordinates[1]]} icon={flatIcon} eventHandlers={{
+            click: () => HandleMarkerClick(flat),
+          }}>
           </Marker>
         ))}
       </ul>
     </MapContainer>
+    {selectedPin && <PopupWindow data={selectedPin} onClose={handleMarkerClose} companyName={currentCompany}/>}
   </div>
 } else {
 return <div>Waiting</div>;

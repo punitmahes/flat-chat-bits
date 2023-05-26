@@ -8,7 +8,7 @@ import Home from "./pages/Home";
 function App() {
   return (
     <>
-    <div className='bg-black bg-auto'>
+    <div className='bg-black'>
      <Router>
       <Routes>
       <Route exact path="/" element = {<SignUp />} />

@@ -99,7 +99,7 @@ function GoogleAuthenticate() {
   } else if (!user.companyName || !user.location) {
     // Render sign-up form if user is authenticated but has not filled in company name and location
     return (
-      <div className='flex items-center justify-center h-screen w-screen'>
+      <div className='flex items-center justify-center h-screen w-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-blue-900'>
         <div className='bg-zinc-50 p-3 rounded-lg border border-orange-400 border-2 lg:w-2/5 md:w-3/4 shadow-[0px_0px_50px_20px_rgb(255,225,255,0.5)]'>
           <h1 className='flex-auto font-bold text-center w-full text-orange-400 font-serif text-2xl p-3'>Additional Details</h1>
           <div className=''>
