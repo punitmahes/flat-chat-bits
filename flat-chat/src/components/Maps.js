@@ -16,11 +16,11 @@ const Maps = (props) => {
   const [currentCompany, setCurrentCompany] = useState(null);
   var loaded = false;
   const passedUser = props.user;
-  
+  const mapRef = useRef(null); 
 
   const icon = L.icon({
     iconUrl: marker,
-    iconSize: [30, 40],
+    iconSize: [40, 40],
   });
   const userIcon = L.icon({
     iconUrl: markerUser,
@@ -33,6 +33,13 @@ const Maps = (props) => {
   useEffect(() => {
     setUser(passedUser);
   },[passedUser]);
+
+  useEffect(()=>{
+    if(mapRef.current){
+      const map = mapRef.current;
+      map.removeControl(map.zoomControl);
+    }
+  })
 
   useEffect(() => {
     if(user){
@@ -65,7 +72,7 @@ const Maps = (props) => {
     }
   },[user]);
 
-  const mapRef = useRef(null); 
+
   function HandleMarkerClick(data){
     if (mapRef.current) {
       const map = mapRef.current;
@@ -81,7 +88,7 @@ const Maps = (props) => {
 
   if(Object.keys(user).length > 0){
     return  <div className="w-full h-full absolute top-0">
-    <MapContainer ref = {mapRef} center={user.location.coordinates} zoom={13} className="w-full h-full" >
+    <MapContainer ref = {mapRef} center={user.location.coordinates} zoom={18} className="w-full h-full" >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"

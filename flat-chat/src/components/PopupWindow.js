@@ -38,8 +38,8 @@ const PopupWindow = ({ data , onClose, companyName}) => {
     }
   
     return (
-      <div className="popup-window absolute left-0 top-0 flex flex-col h-screen w-4/5  md:w-1/3  border border-gray-100 border-1 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-800 to-blue-900" style={{zIndex:1000}}>
-        <div className="p-4 flex justify-between border-b rounded-lg  border-gray-100">
+      <div className="popup-window absolute left-2 top-20 flex flex-col w-4/5 h-5/6 md:w-1/3  border border-gray-100 border-1 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 opacity-75" style={{zIndex:1000}}>
+        <div className="p-4 flex justify-between ">
         <div className="flex justify-inline">
         <div className="h-9 w-9"><img src={companyLogo}></img></div>
         <div className="font-bold text-2xl p-2 text-white">{companyName}</div>
