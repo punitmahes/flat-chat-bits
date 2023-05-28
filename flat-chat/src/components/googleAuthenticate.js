@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../index.css';
+import '../App.css';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import logo from './media/PS-findit.png';
@@ -9,6 +10,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import UIImage from './media/UI_About.png'
 import EmploymentTypeInput from './EmploymentTypeInput';
+import manUI from './media/man.gif'
 
 
 function GoogleAuthenticate() {
@@ -94,10 +96,11 @@ function GoogleAuthenticate() {
   if (!user || Object.keys(user).length == 0) {
     // Render Google sign-in button if user is not authenticated
     return (
-      <div className='flex items-center justify-center h-screen w-screen'>
-        <div className='lg:w-2/5 md:w-3/4'>
+      <div className='flex items-center justify-center h-screen w-screen relative overflow-hidden'>
+        <div className='-bottom-4 right-0 absolute md:-bottom-6 md:w-5/12 '><img src={manUI} ></img></div>
+        <div className='md:w-2/5 md:w-3/4'>
           <div className='flex-auto w-full text-center'>
-           <div className='w-full flex justify-center'><img src={logo} alt='logo' className='lg:w-3/4 md:w-1/2 sm:w-1/2'></img></div>
+           <div className='w-full flex justify-center'  style = {{fontFamily: "Climate Crisis", zIndex:1000}}><div className='text-white text-4xl text-opacity-100 text-2xl m-3 md:mx-8'>Find Flat</div></div>
             <Button
               variant="outlined"
               color="primary"
@@ -125,7 +128,7 @@ function GoogleAuthenticate() {
           <div className="m-3">
             <EmploymentTypeInput onUpdateEmploymentType={handleUpdateEmploymentType} />
           </div>
-          <div className='m-3'><TextField sx={{"& .MuiInputLabel-root": {color: '#dcfce7'}, ".MuiInputBase-input": {color: '#dcfce7'},"& .MuiOutlinedInput-root": {"& > fieldset": { color: '#dcfce7',borderColor: "#dcfce7", borderWidth: 1 },},}} label="Preferred Range" onChange={handlebudgetChange} value={budget} className='w-full'/></div>
+          <div className='m-3'><TextField sx={{"& .MuiInputLabel-root": {color: '#dcfce7'}, ".MuiInputBase-input": {color: '#dcfce7'},"& .MuiOutlinedInput-root": {"& > fieldset": { color: '#dcfce7',borderColor: "#dcfce7", borderWidth: 1 },},}} label="Preferred Price Range" onChange={handlebudgetChange} value={budget} className='w-full'/></div>
           <div className='flex w-full justify-center'><button className="border bg-green-900 text-white md:bg-transparent md:border-green-500 md:text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg">Submit</button></div>
           {errorMessage && (
                 <div className="m-3 text-red-500 flex justify-center">{errorMessage}</div>
