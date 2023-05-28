@@ -4,9 +4,11 @@ import '../index.css';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import logo from './media/PS-findit.png';
-import LocationInput from './LoactionInput';
+import LocationInput from './LocationInput';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import UIImage from './media/UI_About.png'
+import EmploymentTypeInput from './EmploymentTypeInput';
 
 
 function GoogleAuthenticate() {
@@ -14,7 +16,10 @@ function GoogleAuthenticate() {
   const [companyName, setCompanyName] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
-  const [description, setDescription] = useState('');
+  const [Role, setRole] = useState('');
+  const [employmentType, setEmploymentType] = useState('');
+  const [budget, setBudget] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +41,7 @@ function GoogleAuthenticate() {
 
   useEffect(()=> {
     if(user?.companyName){
-      navigate('/home', {state: {user}});
+      //navigate('/home', {state: {user}});
     }
   },[user])
   
@@ -53,16 +58,26 @@ function GoogleAuthenticate() {
     setLongitude(e.target.value);
   };
 
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
   };
 
+  const handleUpdateEmploymentType = (e) => {
+    setEmploymentType(e);
+  };
+
+  const handlebudgetChange = (e) => {
+    setBudget(e);
+  }
 
   const handleCreateUser = (e) => {
     e.preventDefault();
-
+    if (!companyName || !latitude || !longitude || !Role || !employmentType || !budget) {
+      setErrorMessage('Please fill in all fields.');
+      return;
+    };
     // Call server-side create user endpoint to update user's company name and location
-    axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, description }).then((res) => {
+    axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, Role, employmentType, budget}).then((res) => {
       setUser(res.data);
       navigate('/home', {state: {user}});
     }).catch((err) => {
@@ -71,7 +86,6 @@ function GoogleAuthenticate() {
   };
 
   function handleUpdateLocation(lat, lon) {
-    console.log(`Updating location to lat: ${lat}, lon: ${lon}`);
     // Your code to handle the updated location goes here
     setLatitude(lat);
     setLongitude(lon);
@@ -96,18 +110,26 @@ function GoogleAuthenticate() {
         </div>
       </div>
     );
-  } else if (!user.companyName || !user.location) {
+  } else if (!user.companyName || !user.location || true) {
     // Render sign-up form if user is authenticated but has not filled in company name and location
     return (
-      <div className='flex items-center justify-center h-screen w-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-blue-900'>
-        <div className='bg-zinc-50 p-3 rounded-lg border border-orange-400 border-2 lg:w-2/5 md:w-3/4 shadow-[0px_0px_50px_20px_rgb(255,225,255,0.5)]'>
-          <h1 className='flex-auto font-bold text-center w-full text-orange-400 font-serif text-2xl p-3'>Additional Details</h1>
+      <div className='flex items-center relative justify-center h-screen w-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700  overflow-hidden'>
+        <div className='w-10/12 md:w-5/12 h-auto absolute -bottom-10 -left-10 md:-bottom-20 md:-left-20 opacity-20 md:opacity-60'><img src={UIImage}></img></div>
+        <div className='bg-zinc-50 p-3 rounded-lg border border-green-200 border-2 w-3/4 lg:w-2/5 md:w-3/4 bg-opacity-0'>
+          <h1 className='flex-auto font-bold text-center w-full text-green-100 font-serif text-2xl p-3'>Tell us more about yourself {String.fromCodePoint(0x270D)}</h1>
           <div className=''>
           <form onSubmit={handleCreateUser} className='flex-auto m-1'>
-          <div className='m-3'><TextField  id="outlined" label="PS Station" onChange={handleCompanyNameChange} value={companyName} className='w-full border-white'/></div>
-          <div className ='m-3'><LocationInput className='w-full' onUpdateLocation={handleUpdateLocation} /></div>
-          <div className='m-3'><TextField id="outlined-password-input" label="About You" onChange={handleDescriptionChange} value={description} className='w-full'/></div>
-          <div className='flex w-full justify-center'><button className="border border-green-500 text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg">Submit</button></div>
+          <div className='m-3'><TextField  sx={{"& .MuiInputLabel-root": {color: '#dcfce7'}, ".MuiInputBase-input": {color: '#dcfce7'},"& .MuiOutlinedInput-root": {"& > fieldset": { color: '#dcfce7',borderColor: "#dcfce7", borderWidth: 1 },},}} id="outlined" label="Company Name" onChange={handleCompanyNameChange} value={companyName} className='w-full border-white'/></div>
+          <div className='m-3'><TextField id="outlined-password-input" sx={{"& .MuiInputLabel-root": {color: '#dcfce7'}, ".MuiInputBase-input": {color: '#dcfce7'},"& .MuiOutlinedInput-root": {"& > fieldset": { color: '#dcfce7',borderColor: "#dcfce7", borderWidth: 1 },},}} label="Role" onChange={handleRoleChange} value={Role} className='w-full'/></div>
+          <div className ='m-3'><LocationInput onUpdateLocation={handleUpdateLocation} /></div>
+          <div className="m-3">
+            <EmploymentTypeInput onUpdateEmploymentType={handleUpdateEmploymentType} />
+          </div>
+          <div className='m-3'><TextField sx={{"& .MuiInputLabel-root": {color: '#dcfce7'}, ".MuiInputBase-input": {color: '#dcfce7'},"& .MuiOutlinedInput-root": {"& > fieldset": { color: '#dcfce7',borderColor: "#dcfce7", borderWidth: 1 },},}} label="Preferred Range" onChange={handlebudgetChange} value={budget} className='w-full'/></div>
+          <div className='flex w-full justify-center'><button className="border bg-green-900 text-white md:bg-transparent md:border-green-500 md:text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg">Submit</button></div>
+          {errorMessage && (
+                <div className="m-3 text-red-500 flex justify-center">{errorMessage}</div>
+              )}
           </form>
           </div>
           </div>
