@@ -43,7 +43,7 @@ function GoogleAuthenticate() {
 
   useEffect(()=> {
     if(user?.companyName){
-      //navigate('/home', {state: {user}});
+      navigate('/home', {state: {user}});
     }
   },[user])
   
@@ -65,11 +65,11 @@ function GoogleAuthenticate() {
   };
 
   const handleUpdateEmploymentType = (e) => {
-    setEmploymentType(e);
+    setEmploymentType(e.target.value);
   };
 
   const handlebudgetChange = (e) => {
-    setBudget(e);
+    setBudget(e.target.value);
   }
 
   const handleCreateUser = (e) => {
@@ -87,7 +87,7 @@ function GoogleAuthenticate() {
     });
   };
 
-  function handleUpdateLocation(lat, lon) {
+  function handleUpdateLocation(lat, lon, label) {
     // Your code to handle the updated location goes here
     setLatitude(lat);
     setLongitude(lon);
@@ -96,16 +96,16 @@ function GoogleAuthenticate() {
   if (!user || Object.keys(user).length == 0) {
     // Render Google sign-in button if user is not authenticated
     return (
-      <div className='flex items-center justify-center h-screen w-screen relative overflow-hidden'>
+      <div className='flex items-center justify-center h-screen w-screen relative overflow-y-hidden'>
         <div className='-bottom-4 right-0 absolute md:-bottom-6 md:w-5/12 '><img src={manUI} ></img></div>
         <div className='md:w-2/5 md:w-3/4'>
           <div className='flex-auto w-full text-center'>
-           <div className='w-full flex justify-center'  style = {{fontFamily: "Climate Crisis", zIndex:1000}}><div className='text-white text-4xl text-opacity-100 text-2xl m-3 md:mx-8'>Find Flat</div></div>
+           <div className='w-full flex justify-center '  style = {{fontFamily: "Climate Crisis", zIndex:1000}}><div className='text-white text-4xl text-opacity-100 text-2xl m-3 md:mx-8'>Find Flat</div></div>
             <Button
               variant="outlined"
               color="primary"
               startIcon={<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/706px-Google_%22G%22_Logo.svg.png" alt="Google logo" className="w-4 h-4 mr-2" />}
-              className="px-4 py-2 text-sm font-medium text-black bg-white !important hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="px-4  py-2 text-sm font-medium text-black bg-white !important hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               <a href='http://localhost:3001/auth/google'>Sign In</a>
     </Button>
@@ -129,7 +129,7 @@ function GoogleAuthenticate() {
             <EmploymentTypeInput onUpdateEmploymentType={handleUpdateEmploymentType} />
           </div>
           <div className='m-3'><TextField sx={{"& .MuiInputLabel-root": {color: '#dcfce7'}, ".MuiInputBase-input": {color: '#dcfce7'},"& .MuiOutlinedInput-root": {"& > fieldset": { color: '#dcfce7',borderColor: "#dcfce7", borderWidth: 1 },},}} label="Preferred Price Range" onChange={handlebudgetChange} value={budget} className='w-full'/></div>
-          <div className='flex w-full justify-center'><button className="border bg-green-900 text-white md:bg-transparent md:border-green-500 md:text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg">Submit</button></div>
+          <div className='flex w-full justify-center relative'><button className="border bg-green-900 text-white md:bg-transparent md:border-green-500 md:text-green-500 hover:bg-green-500 hover:text-white font-bold py-2 px-4 rounded-lg" style={{zIndex:999}}>Submit</button></div>
           {errorMessage && (
                 <div className="m-3 text-red-500 flex justify-center">{errorMessage}</div>
               )}

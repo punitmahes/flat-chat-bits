@@ -41,7 +41,8 @@ const LocationInput = ({ onUpdateLocation }) => {
     );
     setLocation(event.target.value);
     if (selectedValue && selectedValue.lat && selectedValue.lon) {
-      onUpdateLocation(selectedValue.lat, selectedValue.lon);
+      console.log(selectedValue);
+      onUpdateLocation(selectedValue.lat, selectedValue.lon, selectedValue.label);
     }
     setShowDropdown(false);
   }

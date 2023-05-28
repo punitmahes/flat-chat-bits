@@ -16,8 +16,6 @@ const EmploymentTypeInput = ({ onUpdateEmploymentType }) => {
         className="block w-full px-2 text-base border border-green-200 h-2/3 py-4 rounded-md shadow-sm focus:outline-none text-green-100 bg-transparent"
         value={employmentType}
         onChange={handleEmploymentTypeChange}
-        placeholder='Employment Type'
-        isClearable={true}
       >
         <option value="" disabled selected hidden>Employment Type</option>
         <option value="full-time" className="py-2 px-4 bg-green-100 text-zinc-900">Full-Time</option>

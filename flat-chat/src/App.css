@@ -44,3 +44,8 @@
 .leaflet-control-attribution {
   filter: invert(89%) hue-rotate(270deg) brightness(90%) contrast(80%);
 }
+
+.leaflet-tile {
+  border: none !important;
+  box-shadow: none !important;
+}

@@ -38,7 +38,7 @@ const PopupWindow = ({ data , onClose, companyName}) => {
     }
   
     return (
-      <div className="popup-window absolute left-2 top-20 flex flex-col w-4/5 h-5/6 md:w-1/3  border border-gray-100 border-1 rounded-lg bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-700 opacity-75" style={{zIndex:1000}}>
+      <div className="popup-window absolute left-2 top-20 flex flex-col w-11/12 h-5/6 md:w-1/3  border border-green-200 border-1 rounded-lg bg-gradient-to-br from-zinc-700 via-zinc-800 to-zinc-900 opacity-75" style={{zIndex:1000}}>
         <div className="p-4 flex justify-between ">
         <div className="flex justify-inline">
         <div className="h-9 w-9"><img src={companyLogo}></img></div>
@@ -89,13 +89,12 @@ const PopupWindow = ({ data , onClose, companyName}) => {
                           className="px-4 py-2 text-sm font-medium text-black bg-white !important hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                       ><a href={'mailto:' + item.email}>Gmail</a></Button>
                 </div>
-              </div>
-                      
+              </div>    
             </div>
              </>
           ))}
-          {!apiResult && <div className="h-screen w-full flex justify-center"><CircularProgress /></div>}
         </div>
+        {!apiResult && <div className="h-full w-full flex justify-center Align-center"><CircularProgress /></div>}
       </div>
       </div>
     );
