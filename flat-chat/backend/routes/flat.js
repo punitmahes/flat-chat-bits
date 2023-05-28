@@ -71,7 +71,8 @@ router.post('/createFlat',
     body('longitude').notEmpty().withMessage('Longitude is required'),
     body('rent').isNumeric().withMessage('Rent must be a number'),
     body('bedrooms').isNumeric().withMessage('Bedrooms must be a number'),
-    body('description').isLength({ min: 10, max: 500 }).withMessage('Description must be between 10 and 500 characters')
+    body('description').isLength({ min: 10, max: 500 }).withMessage('Description must be between 10 and 500 characters'),
+    body.apply('type').notEmpty().withMessage('Select a type')
 ],
 async (req, res) => {
     const errors = validationResult(req);
@@ -84,7 +85,8 @@ async (req, res) => {
         rent: req.body.rent,
         bedrooms: req.body.bedrooms,
         description: req.body.description,
-        createdBy: req.body.createdBy
+        createdBy: req.body.createdBy,
+        type: req.body.type
     });
 
   try {
@@ -108,6 +110,9 @@ router.patch('/:id', getFlat, async (req, res) => {
   }
   if (req.body.description != null) {
     res.flat.description = req.body.description;
+  }
+  if (req.body.type != null) {
+    res.flat.type = req.body.type;
   }
 
   try {

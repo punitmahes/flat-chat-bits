@@ -108,6 +108,11 @@ async (req, res) => {
       user.companyName = compnayName;
       user.location = {type : "Point", coordinates : [latitude,longitude]};
       user.description = description;
+      user.reason = reason;
+      user.role = role;
+      user.preferredRoommate = preferredRoommate;
+      user.budget = budget;
+      user.yearOfStudy = yearOfStudy;
       user.save();
       console.log(user);
       res.status(200).json(user);
@@ -141,6 +146,21 @@ router.patch('/:id', getUser, async (req, res) => {
   }
   if (req.body.latitude != null && req.body.longitude != null) {
     res.user.location = {type:"Point", coordinates:[req.body.latitude,req.body.longitude]}
+  }
+  if (req.body.reason != null) {
+    res.user.reason = req.body.reason;
+  }
+  if (req.body.role != null) {
+    res.user.role = req.body.role;
+  }
+  if (req.body.preferredRoommate != null) {
+    res.user.preferredRoommate = req.body.preferredRoommate;
+  }
+  if (req.body.budget != null) {
+    res.user.budget = req.body.budget;
+  }
+  if (req.body.yearOfStudy != null) {
+    res.user.yearOfStudy = req.body.yearOfStudy;
   };
 
   try {
