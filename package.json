@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@mui/icons-material": "^5.11.16",
     "react-leaflet": "^4.2.1"
   }
 }
