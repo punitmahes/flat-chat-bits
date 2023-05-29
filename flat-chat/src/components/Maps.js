@@ -81,6 +81,14 @@ const Maps = (props) => {
     setCurrentCompany(data.companyName);
     setSelectedPin(data.coordinates);
   }
+  function HandleMarkerClickFlat(data){
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.flyTo(data.coordinates, 18); // Adjust the zoom level as needed
+    }
+    setCurrentCompany(data.description);
+    setSelectedPin(data.coordinates);
+  }
 
   function handleMarkerClose(){
     setSelectedPin(null);
@@ -104,7 +112,7 @@ const Maps = (props) => {
       <ul>
         {flats.map(flat => (
           <Marker key={flat.coordinates} position={[flat.coordinates[0], flat.coordinates[1]]} icon={flatIcon} eventHandlers={{
-            click: () => HandleMarkerClick(flat),
+            click: () => HandleMarkerClickFlat(flat),
           }}>
           </Marker>
         ))}

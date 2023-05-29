@@ -59,6 +59,27 @@ router.get('/unique/flats', requireApiKey, async (req, res) => {
   }
 });
 
+router.get('/flats', requireApiKey, async (req, res) => {
+  const latitude = parseFloat(req.query.latitude);
+  const longitude = parseFloat(req.query.longitude);
+  try {
+    Flat.find({
+      location: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [latitude, longitude]
+          },
+          $maxDistance: 0.5
+        }
+      }
+    }).then(flats=>res.json(flats));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get a single flat
 router.get('/:id', getFlat, (req, res) => {
   res.json(res.flat);
