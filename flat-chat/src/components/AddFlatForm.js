@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate} from "react-router-dom";
 import Button from '@mui/material/Button';
 import UI from './media/manUIflat.png'
 import TextField from '@mui/material/TextField';
 import LocationInput from './LocationInput';
 import FlatTypeInput from "./FlatTypeInput";
+import axios from 'axios';
 
 const AddFlatForm = (props) => {
     const [user,setUser] = useState([]);
@@ -15,19 +17,35 @@ const AddFlatForm = (props) => {
     const [description, setDescription] = useState('');
     const [selectedFlatType, setSelectedFlatType] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
     useEffect(()=>{
         setUser(props.user);
     },[props.user]);
 
-    const handleCreateFlat = (e) => {
+    const handleCreateFlat = async (e) => {
         e.preventDefault();
-        if (!user || !latitude || !longitude || !rent || !vacantRoom || !selectedFlatType) {
+        if (!user || !latitude || !longitude || !rent || !vacantRoom || !selectedFlatType || !flatAddress) {
           setErrorMessage('Please fill in all fields.');
           return;
         };
-
+        var _id = user._id;
         //Compelete the post method of the Add flat. Look at variables here
+        try {
+            const response = await axios.post('http://localhost:3001/api/flat/createFlat', {
+              latitude,
+              longitude,
+              rent,
+              vacantRoom,
+              description,
+              _id,
+              flatAddress // Include the createdBy field with the authenticated user's ObjectId
+            });
+            // Handle success response, e.g., show a success message or redirect
+            navigate('/home',{state: {user}});
+          } catch (error) {
+            console.log(error);
+          }
     };
 
     function handleUpdateLocation(lat, lon, label) {

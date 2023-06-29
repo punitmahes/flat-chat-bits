@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import UIImage from './media/UI_About.png'
 import EmploymentTypeInput from './EmploymentTypeInput';
 import manUI from './media/man.gif'
+import { base_url } from './url'
 
 
 function GoogleAuthenticate() {
@@ -33,7 +34,7 @@ function GoogleAuthenticate() {
     }
 
     async function getData(id){
-      var url = 'http://localhost:3001/api/user/'+id.toString();
+      var url = base_url + '/api/user/'+id.toString();
       const response = await axios.get(url);
       const data = await response.data;
       await setUser(data);
@@ -79,7 +80,7 @@ function GoogleAuthenticate() {
       return;
     };
     // Call server-side create user endpoint to update user's company name and location
-    axios.patch('http://localhost:3001/api/user/' + user._id, { companyName, latitude, longitude, Role, employmentType, budget}).then((res) => {
+    axios.patch(base_url+'/api/user/' + user._id, { companyName, latitude, longitude, Role, employmentType, budget}).then((res) => {
       setUser(res.data);
       navigate('/home', {state: {user}});
     }).catch((err) => {
@@ -107,7 +108,7 @@ function GoogleAuthenticate() {
               startIcon={<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/706px-Google_%22G%22_Logo.svg.png" alt="Google logo" className="w-4 h-4 mr-2" />}
               className="px-4  py-2 text-sm font-medium text-black bg-white !important hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
-              <a href='http://localhost:3001/auth/google'>Sign In</a>
+              <a href={base_url+'/auth/google'}>Sign In</a>
     </Button>
           </div>
         </div>

@@ -7,12 +7,15 @@ import marker from './media/marker.png'
 import markerUser from './media/location.png'
 import markerFlat from './media/flat-pin.png'
 import PopupWindow from "./PopupWindow";
+import PopupWindowFlat from "./PopupWindowFlat";
+import { base_url } from "./url";
 
 const Maps = (props) => {
   const [user, setUser] = useState([]);
   const [allCoordinates, setAllCoordinates] = useState([]);
   const [flats,setFlats] = useState([]);
   const [selectedPin, setSelectedPin] = useState(null);
+  const [selectedPinFlat, setSelectedPinFlat] = useState(null);
   const [currentCompany, setCurrentCompany] = useState(null);
   var loaded = false;
   const passedUser = props.user;
@@ -50,7 +53,7 @@ const Maps = (props) => {
             "x-api-key": "1234"
           }
         }
-        var url = 'http://localhost:3001/api/user/unique/coordinates/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=1000000000';
+        var url = base_url + '/api/user/unique/coordinates/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=1000000000';
         console.log(url);
         axios.get(url,config).then(response => {
           setAllCoordinates(response.data);
@@ -59,11 +62,11 @@ const Maps = (props) => {
         .catch(error => {
           console.error(error);
         });
-        var url = 'http://localhost:3001/api/flat/unique/flats/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=1000000000';
+        var url = base_url+'/api/flat/unique/flats/?latitude='+user.location.coordinates[0].toString()+'&longitude='+user.location.coordinates[1].toString()+'&radius=1000000000';
         console.log(url);
         axios.get(url,config).then(response => {
+          console.log(response.data);
           setFlats(response.data);
-          console.log(flats);
         })
         .catch(error => {
           console.error(error);
@@ -82,8 +85,18 @@ const Maps = (props) => {
     setSelectedPin(data.coordinates);
   }
 
+  function HandleMarkerFlatClick(data){
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.flyTo(data.coordinates, 18); // Adjust the zoom level as needed
+    }
+    setCurrentCompany("Flat/PG");
+    setSelectedPinFlat(data.coordinates);
+  }
+
   function handleMarkerClose(){
     setSelectedPin(null);
+    setSelectedPinFlat(null);
   }
 
   if(Object.keys(user).length > 0){
@@ -104,13 +117,14 @@ const Maps = (props) => {
       <ul>
         {flats.map(flat => (
           <Marker key={flat.coordinates} position={[flat.coordinates[0], flat.coordinates[1]]} icon={flatIcon} eventHandlers={{
-            click: () => HandleMarkerClick(flat),
+            click: () => HandleMarkerFlatClick(flat),
           }}>
           </Marker>
         ))}
       </ul>
     </MapContainer>
     {selectedPin && <PopupWindow data={selectedPin} onClose={handleMarkerClose} companyName={currentCompany}/>}
+    {selectedPinFlat && <PopupWindowFlat data={selectedPinFlat} onClose={handleMarkerClose} companyName={currentCompany}/>}
   </div>
 } else {
 return <div>Waiting</div>;

@@ -6,6 +6,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SchoolIcon from '@mui/icons-material/School';
 import WorkIcon from '@mui/icons-material/WorkOutline';
 import Button from '@mui/material/Button';
+import { base_url } from "./url";
 
 const PopupWindow = ({ data , onClose, companyName}) => {
     const [apiResult, setApiResult] = useState(null); // Result of the API call
@@ -17,7 +18,7 @@ const PopupWindow = ({ data , onClose, companyName}) => {
               "x-api-key": "1234"
             }
         };
-        var url  = 'http://localhost:3001/api/user/users?latitude=' + data[0] + '&longitude=' + data[1];
+        var url  = base_url + '/api/user/users?latitude=' + data[0] + '&longitude=' + data[1];
         axios.get(url, config).then(response=>{
             setApiResult(response.data);
         }).catch(err => {

@@ -17,7 +17,7 @@ const uuid = require('uuid');
 const apiKey = 1234;
 
 //port-address for local env
-const port = 3001
+const port = process.env.PORT || 3001;
 
 //Connect to database
 mongoDb()

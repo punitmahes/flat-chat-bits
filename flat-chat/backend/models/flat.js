@@ -5,12 +5,16 @@ const flatSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ['Point'],
-      required: true
+      required: false
     },
     coordinates: {
       type: [Number],
-      required: true
+      required: false
     }
+  },
+  Address: {
+    type: String,
+    required: false,
   },
   rent: {
     type: Number,
@@ -22,12 +26,16 @@ const flatSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true
+    required: false
+  },
+  flatType: {
+    type: String,
+    required: false
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   }
 });
 

@@ -22,6 +22,31 @@ router.get('/', requireApiKey, async (req, res) => {
   }
 });
 
+router.get('/query', requireApiKey, async (req, res) => {
+  const latitude = parseFloat(req.query.latitude);
+  const longitude = parseFloat(req.query.longitude);
+
+  try {
+    const flat = await Flat.findOne({
+      location: {
+        $geoWithin: {
+          $centerSphere: [[longitude, latitude], 5] // Adjust the radius as needed
+        }
+      }
+    });
+
+    if (flat.length === 0) {
+      return res.status(404).json({ message: 'Cannot find flat with the given coordinates' });
+    }
+
+    res.json(flat);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 router.get('/unique/flats', requireApiKey, async (req, res) => {
   const latitude = parseFloat(req.query.latitude);
   const longitude = parseFloat(req.query.longitude);
@@ -55,6 +80,7 @@ router.get('/unique/flats', requireApiKey, async (req, res) => {
     res.json(flatsWithDescription);
   }
     catch (error) {
+      console.log(error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -74,24 +100,22 @@ router.post('/createFlat',
     body('description').isLength({ min: 10, max: 500 }).withMessage('Description must be between 10 and 500 characters')
 ],
 async (req, res) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0].msg });
-    }  
+  const errors = validationResult(req);
+    
     const flat = new Flat({
-        location: req.body.location,
+        location: {type : "Point", coordinates : [req.body.latitude,req.body.longitude]},
         rent: req.body.rent,
-        bedrooms: req.body.bedrooms,
+        bedrooms: req.body.vacantRoom,
         description: req.body.description,
-        createdBy: req.body.createdBy
+        createdBy: req.body._id,
+        Address: req.body.flatAddress
     });
 
   try {
     const newFlat = await flat.save();
     res.status(201).json(newFlat);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: "Cannot Create  A flat" });
   }
 });
 

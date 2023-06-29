@@ -7,7 +7,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
 
-  res.redirect(`http://localhost:3000/?ID=${req.user._id}`);
+  res.redirect(`${process.env.BASE_URL}/?ID=${req.user._id}`);
 });
 
 module.exports = router;
